@@ -1,4 +1,5 @@
 
+
 const {GraphQLObjectType, GraphQLID,GraphQLString, GraphQLSchema, GraphQLList,GraphQLNonNull,GraphQLEnumType} = require('graphql')
 
 
@@ -112,6 +113,11 @@ const mutation = new GraphQLObjectType({
                 id:{type: GraphQLNonNull(GraphQLID)},
             },
             resolve(parent,args){
+                Project.find({ clientId: args.id }).then((projects) => {
+                    projects.forEach((project) => {
+                      project.deleteOne();
+                    });
+                  });
                 return Client.findByIdAndRemove(args.id)
             }
         },
@@ -124,7 +130,7 @@ const mutation = new GraphQLObjectType({
                 description:{type:GraphQLNonNull(GraphQLString)},
                 status:{
                     type:new GraphQLEnumType({
-                        name:'projectStatus',
+                        name:'ProjectStatus',
                         values:{
                             'new':{value: 'Not Started'},
                             'progress':{value: 'In Progress'},
@@ -172,7 +178,7 @@ const mutation = new GraphQLObjectType({
 
                 status:{
                     type:new GraphQLEnumType({
-                        name:'projectStatusUpdate',
+                        name:'ProjectStatusUpdate',
                         values:{
                             'new':{value: 'Not Started'},
                             'progress':{value: 'In Progress'},
